@@ -168,8 +168,7 @@ GET /chat/message/{user_from}
   "message":[
     {
       "id": 1,
-      "message": "testowa wiadomosc",
-      "user_from": 1
+      "message": "testowa wiadomosc"
     }
   ]
 }
