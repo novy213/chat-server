@@ -126,6 +126,37 @@ GET /chat
   ]
 }
 ```
+## 2.3 Get users list you chatted with
+```
+GET /chat/user
+```
+### Params:
+```
+(null)
+```
+### Body:
+```
+(null)
+```
+### Response: 
+```
+{
+  "error": false,
+  "message": null,
+  "users":[
+    {
+      "id": 1,
+      "name": "jan",
+      "last_name": "kowalski"
+    },
+    {
+      "id": 2,
+      "name": "adam",
+      "last_name": "nowak"
+    }
+  ]
+}
+```
 ## 3.1 Send message to user
 ```
 POST /chat/message/{user_to}
