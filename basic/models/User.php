@@ -11,8 +11,6 @@ namespace app\models;
  * @property string|null $name
  * @property string|null $last_name
  * @property string|null $access_token
- * 
- * @property Project[] $projects
  */
 
 class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
@@ -31,8 +29,8 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     public function rules()
     {
         return [
-            [['login', 'password', 'name', 'last_name'], 'required'],
-            [['login', 'password', 'name', 'last_name'], 'string', 'max' => 255],
+            [['login', 'password'], 'required'],
+            [['login', 'password', 'name', 'last_name', 'access_token'], 'string', 'max' => 255],
         ];
     }
 
@@ -47,17 +45,8 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'password' => 'Password',
             'name' => 'Name',
             'last_name' => 'Last Name',
+            'access_token' => 'Access Token',
         ];
-    }
-
-    /**
-     * Gets query for [[Projects]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getProjects()
-    {
-        return $this->hasMany(Project::class, ['user_id' => 'id']);
     }
 
     /**
@@ -91,7 +80,8 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        return self::findOne(['access_token' => $token]);
+        $user = self::findOne(['access_token' => $token]);
+        return $user;
     }
 
     /**
@@ -146,5 +136,24 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             return true;
         }
         return false;
+    }
+    /**
+     * Gets query for [[Chats]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getChats()
+    {
+        return $this->hasMany(Chat::class, ['user_from' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Chats0]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getChats0()
+    {
+        return $this->hasMany(Chat::class, ['user_to' => 'id']);
     }
 }

@@ -14,7 +14,7 @@ $config = [
     'components' => [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-            'cookieValidationKey' => 'todo',
+            'cookieValidationKey' => 'test',
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -46,77 +46,34 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'enableStrictParsing' => false,
-            'rules' => [                        
+            'rules' => [
                 [
-                    'pattern' => '/api/todo',
+                    'pattern' => '/chat',
                     'route' => '/auth/login',
                     'verb' => 'POST',
-                ],         
-                [
-                    'pattern' => '/api/todo',
-                    'route' => '/auth/logout',
-                    'verb' => 'DELETE',
-                ],             
-                [
-                    'pattern' => '/api/todo/<project_id:\d+>',
-                    'route' => '/site/gettasks',
-                    'verb' => 'GET',
-                ],                
-                [
-                    'pattern' => '/api/todo',
-                    'route' => '/site/getprojects',
-                    'verb' => 'GET',
                 ],
                 [
-                    'pattern' => '/api/todo/register',
+                    'pattern' => '/chat',
+                    'route' => '/auth/logout',
+                    'verb' => 'DELETE',
+                ],
+                [
+                    'pattern' => '/chat/register',
                     'route' => '/site/register',
                     'verb' => 'POST',
                 ],
                 [
-                    'pattern' => '/api/todo/createproject',
-                    'route' => '/site/createproject',
+                    'pattern' => '/chat/<user_to:\d+>',
+                    'route' => '/site/sendmessage',
                     'verb' => 'POST',
                 ],
                 [
-                    'pattern' => '/api/todo/<project_id:\d+>',
-                    'route' => '/site/deleteproject',
-                    'verb' => 'DELETE',
-                ],  
-                [
-                    'pattern' => '/api/todo/<project_id:\d+>',
-                    'route' => '/site/renameproject',
-                    'verb' => 'PUT',
-                ],    
-                [
-                    'pattern' => '/api/todo/<project_id:\d+>',
-                    'route' => '/site/addtask',
-                    'verb' => 'POST',
-                ],           
-                [
-                    'pattern' => '/api/todo/project/<task_id:\d+>',
-                    'route' => '/site/deletetask',
-                    'verb' => 'DELETE',
+                    'pattern' => '/chat/<user_from:\d+>',
+                    'route' => '/site/recivemessage',
+                    'verb' => 'GET',
                 ],
-                [
-                    'pattern' => '/api/todo/project/<task_id:\d+>',
-                    'route' => '/site/edittask',
-                    'verb' => 'PUT',
-                ],    
-                [
-                    'pattern' => '/api/todo/project/<task_id:\d+>',
-                    'route' => '/site/marktask',
-                    'verb' => 'POST',
-                ],    
-            ],    
-        ],
-        /*
-        'urlManager' => [
-            'enablePrettyUrl' => true,
-            'showScriptName' => false,
-            'rules' => [
             ],
         ],
-        */
     ],
     'params' => $params,
 ];
@@ -127,13 +84,14 @@ if (YII_ENV_DEV) {
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
         // uncomment the following to add your IP if you are not connecting from localhost.
-        'allowedIPs' => ['127.0.0.1', '::1'],
+        'allowedIPs' => ['127.0.0.1', '::1', '172.27.0.1'],
     ];
 
     $config['bootstrap'][] = 'gii';
     $config['modules']['gii'] = [
         'class' => 'yii\gii\Module',
-        'allowedIPs' => ['127.0.0.1', '::1', '192.168.0.*', '192.168.178.20' ,'172.23.0.1'] 
+        // uncomment the following to add your IP if you are not connecting from localhost.
+        'allowedIPs' => ['127.0.0.1', '::1', '172.27.0.1'],
     ];
 }
 

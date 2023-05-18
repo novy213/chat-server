@@ -2,7 +2,8 @@
 
 namespace app\controllers;
 
-use app\models\Task;
+use app\models\Chat;
+use app\models\User;
 use Yii;
 use yii\filters\AccessControl;
 use app\components\Controller;
@@ -10,11 +11,10 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
-use app\models\Project;
-use app\models\User;
 
 class SiteController extends Controller
 {
+
     /**
      * {@inheritdoc}
      */
@@ -23,17 +23,13 @@ class SiteController extends Controller
         return [
             'error' => [
                 'class' => 'yii\web\ErrorAction',
-            ],            
+            ],
         ];
-    }    
-    /**
-     * 
-     */
+    }
     public function actionRegister(){
 
-        $post = $this->getJsonInput();        
+        $post = $this->getJsonInput();
         $user = new User();
-        //$user->attributes = $post;
         if (isset($post->login)) {
             $user->login = $post->login;
         }
@@ -50,194 +46,57 @@ class SiteController extends Controller
             $user->save();
             return [
                 'error' => FALSE,
-                'message' => NULL,                
+                'message' => NULL,
             ];
         } else {
             return [
                 'error' => true,
                 'message' => $user->getErrorSummary(false),
             ];
-        }                
-    }
-    public function actionCreateproject(){
-        $post = $this->getJsonInput();        
-        $project = new Project();
-        if (isset($post->project_name)) {
-            $project->project_name = $post->project_name;
         }
-        if (isset($post->user_id)) {
-            $project->user_id = $post->user_id;
-        }        
-        if ($project->validate()) {
-            $project->save();
-            return [
-                'error' => FALSE,
-                'message' => NULL,                
-            ];
-        } else {
-            return [
-                'error' => true,
-                'message' => $project->getErrorSummary(false),
-            ];
-        }  
     }
-    public function actionGetprojects(){           
+    public function actionSendmessage($user_to){
+        $post = $this->getJsonInput();
         $user = Yii::$app->user->identity;
-        if ($user != null) {            
-            return [
-                'error' => FALSE,
-                'message' => NULL,    
-                'projects' => $user->projects          
+        $chat = new Chat();
+        if(isset($post->message)){
+            $chat->message = $post->message;
+        }
+        if(isset($user_to)){
+            $chat->user_to = $user_to;
+        }
+        if(isset($user)){
+            $chat->user_from = $user->id;
+        }
+        if($chat->validate()){
+            $chat->save();
+            return[
+                'error' => false,
+                'message'=>null
             ];
-        } else {
+        }
+        else{
             return [
                 'error' => true,
-                'message' => 'This user dont have any project',
-                'projects' => null
-            ];
-        }  
-    }
-    public function actionRenameproject($project_id){
-        $post = $this->getJsonInput();
-        $project = Project::find()->andWhere(['id'=>$project_id])->one();
-        if(!$project){
-            return [
-                'error' => true,
-                'message' => 'Project not found',
-            ];
-        }        
-        if (!is_null($post)) {
-            $project->project_name = $post->project_name;
-            $project->update();
-            return [
-                'error' => FALSE,
-                'message' => NULL,                
-            ];
-        } else {
-            return [
-                'error' => true,
-                'message' => $project->getErrorSummary(false),
-            ];
-        }  
-    }
-    public function actionDeleteproject($project_id){
-        if(!$project_id){
-            return [
-                'error' => true,
-                'message' => 'Project not found',
-            ];
-        } else {
-            $project = Project::find()->andWhere(['id'=>$project_id])->one();
-            Project::deleteAll(['id'=>$project->id]);
-            return [
-                'error' => FALSE,
-                'message' => NULL,                
+                'message' => $chat->getErrorSummary(false),
             ];
         }
     }
-    public function actionAddtask($project_id){
-        $post = $this->getJsonInput();        
-        $task = new Task();
-        if (isset($post->description)) {
-            $task->description = $post->description;
-        }
-        if (isset($project_id)) {
-            $task->project_id = $project_id;
-        }        
-        if ($task->validate()) {
-            $task->save();
-            return [
-                'error' => FALSE,
-                'message' => NULL,                
-            ];
-        } else {
-            return [
-                'error' => true,
-                'message' => $task->getErrorSummary(false),
-            ];
-        }  
-    }
-    public function actionEdittask($task_id){
-        $post = $this->getJsonInput();
-        $project = Task::find()->andWhere(['id'=>$task_id])->one();
-        if(!$project){
-            return [
-                'error' => true,
-                'message' => 'Task not found',
+    public function actionRecivemessage($user_from){
+        $user = Yii::$app->user->identity;
+        $chat = Chat::find()->andWhere(['user_to'=>$user->id,'user_from'=>$user_from])->all();
+        if($chat!=null){
+            return[
+                'error' => false,
+                'message'=>null,
+                'chat'=>$chat
             ];
         }
-        if (!is_null($post)) {
-            $project->description = $post->description;
-            $project->update();
-            return [
-                'error' => FALSE,
-                'message' => NULL,                
-            ];
-        } else {
+        else{
             return [
                 'error' => true,
-                'message' => $project->getErrorSummary(false),
-            ];
-        }  
-    }
-    public function actionGettasks($project_id){        
-        if (!isset($project_id)) {
-            return [
-                'error' => true,
-                'message' => 'project id is required',
+                'message' => 'There is no any message for you'
             ];
         }
-        $task = Task::find()->andWhere(['project_id'=>$project_id])->all();
-        if ($task != null) {            
-            return [
-                'error' => FALSE,
-                'message' => NULL,    
-                'tasks' => $task
-            ];
-        } else {
-            return [
-                'error' => true,
-                'message' => 'There is not tasks in project',
-                'tasks' => null
-            ];
-        }  
-    }
-    public function actionDeletetask($task_id){
-        $task = Task::find()->andWhere(['id'=>$task_id])->one();
-        if(!$task){
-            return [
-                'error' => true,
-                'message' => 'Task not found',
-            ];
-        } else {
-            $task->delete();
-            return [
-                'error' => FALSE,
-                'message' => NULL,                
-            ];
-        }
-    }
-    public function actionMarktask($task_id){
-        $post = $this->getJsonInput();
-        $task = Task::find()->andWhere(['id'=>$task_id])->one();
-        if(!$task){
-            return [
-                'error' => true,
-                'message' => 'Task not found',
-            ];
-        }
-        if (!is_null($post)) {
-            $task->done = $post->done;
-            $task->update();
-            return [
-                'error' => FALSE,
-                'message' => NULL,                
-            ];
-        } else {
-            return [
-                'error' => true,
-                'message' => $task->getErrorSummary(false),
-            ];
-        }  
     }
 }
