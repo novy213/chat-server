@@ -70,7 +70,7 @@ POST /chat
   "message": null
 }
 ```
-## 2.1 Get user we are chating with
+## 2.1 Get user we are chatting with
 ```
 GET /chat/{chat_user}
 ```
