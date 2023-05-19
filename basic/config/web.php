@@ -48,28 +48,38 @@ $config = [
             'enableStrictParsing' => false,
             'rules' => [
                 [
-                    'pattern' => '/chat',
+                    'pattern' => '/',
                     'route' => '/auth/login',
                     'verb' => 'POST',
                 ],
                 [
-                    'pattern' => '/chat',
+                    'pattern' => '/',
                     'route' => '/auth/logout',
                     'verb' => 'DELETE',
                 ],
                 [
-                    'pattern' => '/chat/register',
+                    'pattern' => '/register',
                     'route' => '/site/register',
                     'verb' => 'POST',
                 ],
                 [
-                    'pattern' => '/chat/<user_to:\d+>',
+                    'pattern' => '/message/<user_to:\d+>',
                     'route' => '/site/sendmessage',
                     'verb' => 'POST',
                 ],
                 [
-                    'pattern' => '/chat/<user_from:\d+>',
+                    'pattern' => '/message/<user_id:\d+>',
                     'route' => '/site/recivemessage',
+                    'verb' => 'GET',
+                ],
+                [
+                    'pattern' => '/user',
+                    'route' => '/site/getusers',
+                    'verb' => 'GET',
+                ],
+                [
+                    'pattern' => '/',
+                    'route' => '/site/getallusers',
                     'verb' => 'GET',
                 ],
             ],

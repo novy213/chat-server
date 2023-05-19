@@ -25,7 +25,7 @@ class m230517_141009_create_table extends Migration
             'id' => $this->primaryKey()->notNull()->unique(),
             'message' => $this->string()->notNull(),
             'user_from' => $this->integer()->notNull(),
-            'user_to' => $this->integer()->notNull()
+            'user_to' => $this->integer()->notNull(),
         ]);
         $this -> alterColumn('chat','id', $this->integer().' AUTO_INCREMENT');
         $this->addForeignKey(
