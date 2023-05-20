@@ -48,7 +48,7 @@ DELETE /chat
 ```
 ## 1.3 Register
 ```
-POST /chat
+POST /chat/register
 ```
 ### Params:
 ```
